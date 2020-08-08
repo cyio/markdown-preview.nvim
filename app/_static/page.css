@@ -1,5 +1,6 @@
 #page-ctn {
-  margin: 0 auto;
+  /* margin: 0 auto; */
+  padding-left: 18%;
   max-width: 900px;
   color: #24292e;
 }
@@ -31,3 +32,21 @@
   font-weight: 600;
 }
 
+
+.table-of-contents {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 18%;
+  height: 100vh;
+  overflow-x: auto;
+}
+.table-of-contents > ul {
+  min-width: 300px;
+}
+
+body { scroll-behavior: smooth; }
+
+ol { counter-reset: list-item; }
+li { display: block; counter-increment: list-item; }
+li:before { content: counters(list-item,'.') ' '; }
