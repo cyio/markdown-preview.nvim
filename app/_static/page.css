@@ -45,8 +45,18 @@
   min-width: 300px;
 }
 
+.table-of-contents ol { counter-reset: list-item; }
+.table-of-contents li { display: block; counter-increment: list-item; }
+.table-of-contents li:before { content: counters(list-item,'.') ' '; }
+
 body { scroll-behavior: smooth; }
 
-ol { counter-reset: list-item; }
-li { display: block; counter-increment: list-item; }
-li:before { content: counters(list-item,'.') ' '; }
+.markdown-body .table-of-contents ol,
+.markdown-body .table-of-contents ul {
+  padding-left: 1em;
+}
+.markdown-body .table-of-contents a {
+  font-size: 14px;
+  font-weight: bold;
+}
+
