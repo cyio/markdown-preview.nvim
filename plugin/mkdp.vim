@@ -67,8 +67,11 @@ if !exists('g:mkdp_preview_options')
       \ 'hide_yaml_meta': 1,
       \ 'sequence_diagrams': {},
       \ 'flowchart_diagrams': {},
-      \ 'content_editable': v:false
+      \ 'content_editable': v:false,
+      \ 'disable_filename': 0
       \ }
+elseif !has_key(g:mkdp_preview_options, 'disable_filename')
+  let g:mkdp_preview_options['disable_filename'] = 0
 endif
 
 " markdown css file absolute path
@@ -91,31 +94,34 @@ if !exists('g:mkdp_page_title')
   let g:mkdp_page_title = '「${name}」'
 endif
 
-function! s:init_command() abort
-  " mapping for user
-  noremap <buffer> <silent> <Plug>MarkdownPreview :call mkdp#util#open_preview_page()<CR>
-  inoremap <buffer> <silent> <Plug>MarkdownPreview <Esc>:call mkdp#util#open_preview_page()<CR>a
-  noremap <buffer> <silent> <Plug>MarkdownPreviewStop :call mkdp#util#stop_preview()<CR>
-  inoremap <buffer> <silent> <Plug>MarkdownPreviewStop <Esc>:call mkdp#util#stop_preview()<CR>a
-  nnoremap <buffer> <silent> <Plug>MarkdownPreviewToggle :call mkdp#util#toggle_preview()<CR>
-  inoremap <buffer> <silent> <Plug>MarkdownPreviewToggle <Esc>:call mkdp#util#toggle_preview()<CR>
-endfunction
+" recognized filetypes
+if !exists('g:mkdp_filetypes')
+  let g:mkdp_filetypes = ['markdown']
+endif
 
-function! s:MkdpAU() abort
-    command! -buffer MarkdownPreview call mkdp#util#open_preview_page()
-    call s:init_command()
+function! s:init_command() abort
+  command! -buffer MarkdownPreview call mkdp#util#open_preview_page()
+  command! -buffer MarkdownPreviewStop call mkdp#util#stop_preview()
+  command! -buffer MarkdownPreviewToggle call mkdp#util#toggle_preview()
+  " mapping for user
+  noremap <buffer> <silent> <Plug>MarkdownPreview :MarkdownPreview<CR>
+  inoremap <buffer> <silent> <Plug>MarkdownPreview <Esc>:MarkdownPreview<CR>a
+  noremap <buffer> <silent> <Plug>MarkdownPreviewStop :MarkdownPreviewStop<CR>
+  inoremap <buffer> <silent> <Plug>MarkdownPreviewStop <Esc>:MarkdownPreviewStop<CR>a
+  nnoremap <buffer> <silent> <Plug>MarkdownPreviewToggle :MarkdownPreviewToggle<CR>
+  inoremap <buffer> <silent> <Plug>MarkdownPreviewToggle <Esc>:MarkdownPreviewToggle<CR>
 endfunction
 
 function! s:init() abort
   augroup mkdp_init
     autocmd!
     if g:mkdp_command_for_global
-      autocmd BufEnter * :call s:MkdpAU()
+      autocmd BufEnter * :call s:init_command()
     else
-      autocmd BufEnter *.{md,mkd,markdown,mdown,mkdn,mdwn} :call s:MkdpAU()
+      autocmd BufEnter,FileType * if index(g:mkdp_filetypes, &filetype) !=# -1 | call s:init_command() | endif
     endif
     if g:mkdp_auto_start
-      autocmd BufEnter *.{md,mkd,markdown,mdown,mkdn,mdwn} call mkdp#util#open_preview_page()
+      execute 'autocmd BufEnter *.{md,mkd,mdown,mkdn,mdwn,' . join(g:mkdp_filetypes, ',') . '} call mkdp#util#open_preview_page()'
     endif
   augroup END
 endfunction

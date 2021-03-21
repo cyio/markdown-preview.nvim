@@ -42,20 +42,33 @@ Plug 'iamcco/markdown-preview.nvim', { 'do': { -> mkdp#util#install() }, 'for': 
 
 
 " If you have nodejs and yarn
-Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app & yarn install'  }
+Plug 'iamcco/markdown-preview.nvim', { 'do': 'cd app && yarn install'  }
 ```
 
 Or install with [dein](https://github.com/Shougo/dein.vim):
 
 ```vim
 call dein#add('iamcco/markdown-preview.nvim', {'on_ft': ['markdown', 'pandoc.markdown', 'rmd'],
-					\ 'build': 'sh -c "cd app & yarn install"' })
+					\ 'build': 'sh -c "cd app && yarn install"' })
 ```
 
 Or with minpac:
 
 ```vim
-call minpac#add('iamcco/markdown-preview.nvim', {'do': 'call mkdp#util#install()'})
+call minpac#add('iamcco/markdown-preview.nvim', {'do': 'packloadall! | call mkdp#util#install()'})
+```
+
+Or with [Vundle](https://github.com/vundlevim/vundle.vim):
+
+Place this in your `.vimrc` or `init.vim`,
+```vim
+Plugin 'iamcco/markdown-preview.nvim' 
+```
+... then run the following in vim
+```vim
+:source %
+:PluginInstall
+:call mkdp#util#install()
 ```
 
 Config:
@@ -118,6 +131,7 @@ let g:mkdp_browserfunc = ''
 " hide_yaml_meta: if hide yaml metadata, default is 1
 " sequence_diagrams: js-sequence-diagrams options
 " content_editable: if enable content editable for preview page, default: v:false
+" disable_filename: if disable filename header for preview page, default: 0
 let g:mkdp_preview_options = {
     \ 'mkit': {},
     \ 'katex': {},
@@ -128,7 +142,8 @@ let g:mkdp_preview_options = {
     \ 'hide_yaml_meta': 1,
     \ 'sequence_diagrams': {},
     \ 'flowchart_diagrams': {},
-    \ 'content_editable': v:false
+    \ 'content_editable': v:false,
+    \ 'disable_filename': 0
     \ }
 
 " use a custom markdown style must be absolute path
@@ -145,6 +160,10 @@ let g:mkdp_port = ''
 " preview page title
 " ${name} will be replace with the file name
 let g:mkdp_page_title = '「${name}」'
+
+" recognized filetypes
+" these filetypes will have MarkdownPreview... commands
+let g:mkdp_filetypes = ['markdown']
 ```
 
 Mappings:
@@ -332,6 +351,11 @@ Answer: set `updatetime` to a small number, for instance: `set updatetime=100`
 
 > if you are using Ubuntu you can install xdg-utils using `sudo apt-get install -y xdg-utils`
 > checkout [issue 199](https://github.com/iamcco/markdown-preview.nvim/issues/199) for more detail.
+
+Question: How can I change the dark/light theme?
+
+Answer: The default theme is based on your system preferences.
+There is a button hidden in the header to change the theme. Place your mouse over the header to reveal it.
 
 ### About vim support
 
